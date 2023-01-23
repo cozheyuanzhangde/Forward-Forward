@@ -2,8 +2,10 @@ import torch
 from torchvision.datasets import MNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
+import matplotlib.pyplot as plt
+import numpy as np
 
-def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
+def MNIST_loaders(train_batch_size=10000, test_batch_size=10000):
 
     transform = Compose([
         ToTensor(),
@@ -24,10 +26,29 @@ def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
 
     return train_loader, test_loader
 
-def overlay_y_on_x(x, y):
-    """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
+def create_data_pos(images, labels):
+    return overlay_labels_on_images(images, labels)
+
+def create_data_neg(images, labels):
+    labels_neg = labels.clone()
+    for idx, y in enumerate(labels):
+        all_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        all_labels.pop(y.item())
+        labels_neg[idx] = torch.tensor(np.random.choice(all_labels)).cuda()
+    return overlay_labels_on_images(images, labels_neg)
+
+def overlay_labels_on_images(images, labels):
+    """Replace the first 10 pixels of images with one-hot-encoded labels
     """
-    x_ = x.clone()
-    x_[:, :10] *= 0.0
-    x_[range(x.shape[0]), y] = x.max()
-    return x_
+    num_images = images.shape[0]
+    data = images.clone()
+    data[:, :10] *= 0.0
+    data[range(0,num_images), labels] = images.max()
+    return data
+
+def visualize_sample(data, name='', idx=0):
+    reshaped = data[idx].cpu().reshape(28, 28)
+    plt.figure(figsize = (4, 4))
+    plt.title(name)
+    plt.imshow(reshaped, cmap="gray")
+    plt.show()
