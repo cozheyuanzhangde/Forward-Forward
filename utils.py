@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import numpy as np
 
-def MNIST_loaders(train_batch_size=10000, test_batch_size=10000):
+def MNIST_loaders(train_batch_size=1000, test_batch_size=10000):
 
     transform = Compose([
         ToTensor(),
@@ -18,13 +18,19 @@ def MNIST_loaders(train_batch_size=10000, test_batch_size=10000):
               transform=transform),
         batch_size=train_batch_size, shuffle=True)
 
-    test_loader = DataLoader(
+    eval_train_loader = DataLoader(
+        MNIST('./data/', train=True,
+              download=True,
+              transform=transform),
+        batch_size=test_batch_size, shuffle=False)
+
+    eval_test_loader = DataLoader(
         MNIST('./data/', train=False,
               download=True,
               transform=transform),
         batch_size=test_batch_size, shuffle=False)
 
-    return train_loader, test_loader
+    return train_loader, eval_train_loader, eval_test_loader
 
 def create_data_pos(images, labels):
     return overlay_labels_on_images(images, labels)
@@ -33,7 +39,7 @@ def create_data_neg(images, labels):
     labels_neg = labels.clone()
     for idx, y in enumerate(labels):
         all_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        all_labels.pop(y.item())
+        all_labels.pop(y.item()) # remove y from labels to generate negative data
         labels_neg[idx] = torch.tensor(np.random.choice(all_labels)).cuda()
     return overlay_labels_on_images(images, labels_neg)
 
