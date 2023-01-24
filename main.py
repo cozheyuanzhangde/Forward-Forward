@@ -1,25 +1,21 @@
 import torch
+import time
 from utils import *
 from model import *
     
 if __name__ == "__main__":
-    torch.manual_seed(1234)
-    train_loader, test_loader = MNIST_loaders()
+    torch.manual_seed(42)
+    train_loader, eval_train_loader, eval_test_loader = MNIST_loaders()
 
-    net = FFNet([784, 2000, 1000, 500, 200, 500, 1000])
-    train_images, train_labels = next(iter(train_loader))
-    train_images, train_labels = train_images.cuda(), train_labels.cuda()
-    data_pos = create_data_pos(train_images, train_labels)
-    data_neg = create_data_neg(train_images, train_labels)
+    net = FFNet([784, 2000, 2000, 2000, 2000])
     
-    # for data, name in zip([train_images, data_pos, data_neg], ['orig', 'pos', 'neg']):
-    #     visualize_sample(data, name)
-    
-    net.train_1(train_loader)
+    time_training_start = time.time()
+    net.train_3(train_loader)
+    time_training_end = time.time()
+    training_time = round(time_training_end - time_training_start, 2)
 
-    # print('train error:', 1.0 - net.predict(train_images).eq(train_labels).float().mean().item())
+    print(f"Training time: {training_time}s")
 
-    # test_images, test_labels = next(iter(test_loader))
-    # test_images, test_labels = test_images.cuda(), test_labels.cuda()
+    print('train error:', str(round((1.0 - net.predict(eval_train_loader)) * 100, 2)) + '%')
 
-    # print('test error:', 1.0 - net.predict(test_images).eq(test_labels).float().mean().item())
+    print('test error:', str(round((1.0 - net.predict(eval_test_loader)) * 100, 2)) + '%')
