@@ -52,7 +52,7 @@ class FFNet(torch.nn.Module):
 
     def train_3(self, data_loader):
         """
-        Train method 3: train all layers for each batch for each epoch. [Slow but better]
+        Train method 3: train all layers for each batch for each epoch. [Slow but better?]
         """
         cached_data = []
         for epoch in tqdm(range(self.num_epochs)):
