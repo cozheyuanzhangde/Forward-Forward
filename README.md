@@ -1,2 +1,1 @@
-# FF
-Hinton's Forward-Forward Algorithm
+# Hinton's Forward-Forward Algorithm
