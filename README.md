@@ -9,4 +9,4 @@ Paper: [The Forward-Forward Algorithm: Some Preliminary Investigations](https://
 - [x] Batch Training
 - [ ] Unsupervised Learning for MNIST dataset
 - [ ] Receptive Fields
-- [ ] Language Modelling
+- [ ] Language Modeling
